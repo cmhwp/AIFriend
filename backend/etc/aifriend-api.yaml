@@ -1,0 +1,20 @@
+Name: aifriend-api
+Host: 0.0.0.0
+Port: 8888
+
+# JWT认证配置
+Auth:
+  AccessSecret: "your-access-secret-key-change-in-production"
+  AccessExpire: 7200  # 2小时
+  RefreshSecret: "your-refresh-secret-key-change-in-production"
+  RefreshExpire: 604800  # 7天
+
+# MySQL数据库配置
+MySQL:
+  DataSource: "root:123456@tcp(127.0.0.1:3306)/aifriend?charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai"
+
+# 跨域配置
+Cors:
+  AllowOrigins:
+    - "http://localhost:5173"
+  AllowCredentials: true

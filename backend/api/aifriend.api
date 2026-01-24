@@ -1,0 +1,104 @@
+syntax = "v1"
+
+info (
+	title:   "AIFriend API"
+	desc:    "AIFriend backend service"
+	author:  "CMH"
+	version: "1.0"
+)
+
+// ==================== 用户认证相关 ====================
+type (
+	// 用户注册请求
+	RegisterReq {
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Email    string `json:"email,optional"`
+	}
+	// 用户登录请求
+	LoginReq {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	// Token响应
+	TokenResp {
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
+		ExpiresIn    int64  `json:"expires_in"`
+	}
+	// 刷新Token请求
+	RefreshTokenReq {
+		RefreshToken string `json:"refresh_token"`
+	}
+	// 用户信息
+	UserInfo {
+		Id        int64  `json:"id"`
+		Username  string `json:"username"`
+		Email     string `json:"email"`
+		Avatar    string `json:"avatar"`
+		CreatedAt string `json:"created_at"`
+	}
+	// 更新用户信息请求
+	UpdateUserReq {
+		Email  string `json:"email,optional"`
+		Avatar string `json:"avatar,optional"`
+	}
+	// 修改密码请求
+	ChangePasswordReq {
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
+	}
+)
+
+// 通用响应
+type (
+	BaseResp {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+	}
+	DataResp {
+		Code    int         `json:"code"`
+		Message string      `json:"message"`
+		Data    interface{} `json:"data"`
+	}
+)
+
+// ==================== 无需认证的接口 ====================
+@server (
+	prefix: /api/v1
+	group:  auth
+)
+service aifriend-api {
+	@doc "用户注册"
+	@handler Register
+	post /auth/register (RegisterReq) returns (BaseResp)
+
+	@doc "用户登录"
+	@handler Login
+	post /auth/login (LoginReq) returns (TokenResp)
+
+	@doc "刷新Token"
+	@handler RefreshToken
+	post /auth/refresh (RefreshTokenReq) returns (TokenResp)
+}
+
+// ==================== 需要认证的接口 ====================
+@server (
+	prefix: /api/v1
+	group:  user
+	jwt:    Auth
+)
+service aifriend-api {
+	@doc "获取当前用户信息"
+	@handler GetUserInfo
+	get /user/info returns (UserInfo)
+
+	@doc "更新用户信息"
+	@handler UpdateUserInfo
+	put /user/info (UpdateUserReq) returns (BaseResp)
+
+	@doc "修改密码"
+	@handler ChangePassword
+	post /user/password (ChangePasswordReq) returns (BaseResp)
+}
+
