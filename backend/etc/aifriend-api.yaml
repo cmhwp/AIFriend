@@ -16,5 +16,5 @@ MySQL:
 # 跨域配置
 Cors:
   AllowOrigins:
-    - "http://localhost:5173"
+    - "http://localhost:3000"
   AllowCredentials: true

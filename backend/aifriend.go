@@ -6,10 +6,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 
 	"aifriend/internal/config"
 	"aifriend/internal/handler"
-	"aifriend/internal/middleware"
 	"aifriend/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -24,12 +24,17 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf)
+	server := rest.MustNewServer(c.RestConf, rest.WithCustomCors(
+		func(header http.Header) {
+			header.Set("Access-Control-Allow-Origin", "*")
+			header.Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin")
+			header.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+			header.Set("Access-Control-Allow-Credentials", "true")
+		},
+		nil,
+		"*",
+	))
 	defer server.Stop()
-
-	// 添加CORS中间件
-	corsMiddleware := middleware.NewCorsMiddleware(c.Cors.AllowOrigins, c.Cors.AllowCredentials)
-	server.Use(corsMiddleware.Handle)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
