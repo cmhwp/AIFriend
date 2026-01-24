@@ -5,7 +5,10 @@ package user
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 
+	"aifriend/internal/model"
 	"aifriend/internal/svc"
 	"aifriend/internal/types"
 
@@ -28,7 +31,35 @@ func NewUpdateUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 func (l *UpdateUserInfoLogic) UpdateUserInfo(req *types.UpdateUserReq) (resp *types.BaseResp, err error) {
-	// todo: add your logic here and delete this line
+	// 从context中获取用户ID
+	userId, err := l.ctx.Value("userId").(json.Number).Int64()
+	if err != nil {
+		return nil, errors.New("无效的用户身份")
+	}
 
-	return
+	// 构建更新数据
+	updates := make(map[string]interface{})
+	if req.Email != "" {
+		updates["email"] = req.Email
+	}
+	if req.Avatar != "" {
+		updates["avatar"] = req.Avatar
+	}
+
+	if len(updates) == 0 {
+		return &types.BaseResp{
+			Code:    400,
+			Message: "没有需要更新的数据",
+		}, nil
+	}
+
+	// 更新用户信息
+	if err := l.svcCtx.DB.Model(&model.User{}).Where("id = ?", userId).Updates(updates).Error; err != nil {
+		return nil, errors.New("更新用户信息失败")
+	}
+
+	return &types.BaseResp{
+		Code:    0,
+		Message: "更新成功",
+	}, nil
 }
