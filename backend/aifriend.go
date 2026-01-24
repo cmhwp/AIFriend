@@ -9,6 +9,7 @@ import (
 
 	"aifriend/internal/config"
 	"aifriend/internal/handler"
+	"aifriend/internal/middleware"
 	"aifriend/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -25,6 +26,10 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+
+	// 添加CORS中间件
+	corsMiddleware := middleware.NewCorsMiddleware(c.Cors.AllowOrigins, c.Cors.AllowCredentials)
+	server.Use(corsMiddleware.Handle)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
