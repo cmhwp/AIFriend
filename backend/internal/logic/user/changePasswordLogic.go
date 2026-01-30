@@ -5,7 +5,6 @@ package user
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 
 	"aifriend/internal/model"
@@ -33,7 +32,7 @@ func NewChangePasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 
 func (l *ChangePasswordLogic) ChangePassword(req *types.ChangePasswordReq) (resp *types.BaseResp, err error) {
 	// 从context中获取用户ID
-	userId, err := l.ctx.Value("userId").(json.Number).Int64()
+	userId, err := userIdFromContext(l.ctx)
 	if err != nil {
 		return nil, errors.New("无效的用户身份")
 	}

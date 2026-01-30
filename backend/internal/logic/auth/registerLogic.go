@@ -6,6 +6,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"aifriend/internal/model"
 	"aifriend/internal/svc"
@@ -31,9 +32,24 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.BaseResp, err error) {
+	username := strings.TrimSpace(req.Username)
+	if username == "" {
+		return &types.BaseResp{
+			Code:    400,
+			Message: "用户名不能为空",
+		}, nil
+	}
+
+	if len(req.Password) < 6 {
+		return &types.BaseResp{
+			Code:    400,
+			Message: "密码长度至少为6位",
+		}, nil
+	}
+
 	// 检查用户名是否已存在
 	var existingUser model.User
-	if err := l.svcCtx.DB.Where("username = ?", req.Username).First(&existingUser).Error; err == nil {
+	if err := l.svcCtx.DB.Where("username = ?", username).First(&existingUser).Error; err == nil {
 		return &types.BaseResp{
 			Code:    400,
 			Message: "用户名已存在",
@@ -48,7 +64,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.BaseResp, 
 
 	// 创建用户
 	user := model.User{
-		Username: req.Username,
+		Username: username,
 		Password: string(hashedPassword),
 		Email:    req.Email,
 	}
