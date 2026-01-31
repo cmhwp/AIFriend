@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8888';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8888';
 
 interface ApiResponse<T = unknown> {
   code?: number;
@@ -123,7 +123,7 @@ class ApiClient {
     }>('/api/v1/user/info');
   }
 
-  async updateUserInfo(data: { email?: string; avatar?: string }) {
+  async updateUserInfo(data: { username?: string; email?: string; avatar?: string }) {
     return this.request<ApiResponse>('/api/v1/user/info', {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -135,6 +135,32 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
     });
+  }
+
+  async uploadAvatar(file: File) {
+    const url = `${this.baseUrl}/api/v1/user/avatar`;
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const headers: HeadersInit = {};
+    const accessToken = this.getAccessToken();
+    if (accessToken) {
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || '上传失败');
+    }
+
+    return data as ApiResponse;
   }
 }
 

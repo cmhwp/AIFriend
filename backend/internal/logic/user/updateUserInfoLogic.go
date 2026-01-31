@@ -6,12 +6,14 @@ package user
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"aifriend/internal/model"
 	"aifriend/internal/svc"
 	"aifriend/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type UpdateUserInfoLogic struct {
@@ -38,8 +40,31 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(req *types.UpdateUserReq) (resp *ty
 
 	// 构建更新数据
 	updates := make(map[string]interface{})
-	if req.Email != "" {
-		updates["email"] = req.Email
+	if req.Username != "" {
+		username := strings.TrimSpace(req.Username)
+		if username == "" {
+			return &types.BaseResp{
+				Code:    400,
+				Message: "用户名不能为空",
+			}, nil
+		}
+
+		var existing model.User
+		if err := l.svcCtx.DB.Where("username = ? AND id <> ?", username, userId).First(&existing).Error; err == nil {
+			return &types.BaseResp{
+				Code:    400,
+				Message: "用户名已存在",
+			}, nil
+		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("查询用户名失败")
+		}
+
+		updates["username"] = username
+	}
+
+	email := strings.TrimSpace(req.Email)
+	if email != "" {
+		updates["email"] = email
 	}
 	if req.Avatar != "" {
 		updates["avatar"] = req.Avatar

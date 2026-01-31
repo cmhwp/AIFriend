@@ -1,6 +1,7 @@
 Name: aifriend-api
 Host: 0.0.0.0
 Port: 8888
+MaxBytes: 3145728
 
 # JWT认证配置
 Auth:
@@ -18,3 +19,8 @@ Cors:
   AllowOrigins:
     - "http://localhost:3000"
   AllowCredentials: true
+
+# 上传配置
+Upload:
+  AvatarDir: "uploads/avatars"
+  MaxAvatarSize: 2097152

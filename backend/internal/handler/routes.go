@@ -34,6 +34,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/auth/register",
 				Handler: auth.RegisterHandler(serverCtx),
 			},
+			{
+				// 获取头像
+				Method:  http.MethodGet,
+				Path:    "/uploads/avatars/:filename",
+				Handler: user.ServeAvatarHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)
@@ -57,6 +63,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/user/password",
 				Handler: user.ChangePasswordHandler(serverCtx),
+			},
+			{
+				// 上传头像
+				Method:  http.MethodPost,
+				Path:    "/user/avatar",
+				Handler: user.UploadAvatarHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

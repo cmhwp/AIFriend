@@ -20,4 +20,8 @@ type Config struct {
 		AllowOrigins     []string
 		AllowCredentials bool
 	}
+	Upload struct {
+		AvatarDir     string
+		MaxAvatarSize int64
+	}
 }

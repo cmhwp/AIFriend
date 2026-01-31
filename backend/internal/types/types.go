@@ -41,8 +41,9 @@ type TokenResp struct {
 }
 
 type UpdateUserReq struct {
-	Email  string `json:"email,optional"`
-	Avatar string `json:"avatar,optional"`
+	Username string `json:"username,optional"`
+	Email    string `json:"email,optional"`
+	Avatar   string `json:"avatar,optional"`
 }
 
 type UserInfo struct {

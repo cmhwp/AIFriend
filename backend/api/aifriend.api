@@ -40,6 +40,7 @@ type (
 	}
 	// 更新用户信息请求
 	UpdateUserReq {
+		Username string `json:"username,optional"`
 		Email  string `json:"email,optional"`
 		Avatar string `json:"avatar,optional"`
 	}
@@ -100,5 +101,8 @@ service aifriend-api {
 	@doc "修改密码"
 	@handler ChangePassword
 	post /user/password (ChangePasswordReq) returns (BaseResp)
-}
 
+	@doc "上传头像"
+	@handler UploadAvatar
+	post /user/avatar returns (DataResp)
+}

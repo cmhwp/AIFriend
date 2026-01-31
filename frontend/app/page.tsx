@@ -4,17 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Header } from '@/components/header';
 import { api } from '@/lib/api';
-import { Bot, MessageSquare, Sparkles, User, Mail, Calendar, LogOut, Settings, ChevronRight } from 'lucide-react';
-
-interface UserInfo {
-  id: number;
-  username: string;
-  email: string;
-  avatar: string;
-  created_at: string;
-}
+import { UserInfo } from '@/lib/types';
+import { Bot, MessageSquare, Sparkles, Settings, ChevronRight } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
@@ -62,59 +56,13 @@ export default function Home() {
   if (user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-        {/* 顶部导航 */}
-        <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-          <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Bot className="w-8 h-8 text-primary" />
-              <span className="text-xl font-bold">AIFriend</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">
-                欢迎，{user.username}
-              </span>
-              <Button variant="ghost" size="icon" onClick={handleLogout}>
-                <LogOut className="w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        </header>
+        <Header user={user} onLogout={handleLogout} />
 
         <main className="max-w-6xl mx-auto px-4 py-8">
-          {/* 用户信息卡片 */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                个人信息
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/50">
-                  <User className="w-10 h-10 p-2 rounded-full bg-primary/10 text-primary" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">用户名</p>
-                    <p className="font-medium">{user.username}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/50">
-                  <Mail className="w-10 h-10 p-2 rounded-full bg-primary/10 text-primary" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">邮箱</p>
-                    <p className="font-medium">{user.email || '未设置'}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/50">
-                  <Calendar className="w-10 h-10 p-2 rounded-full bg-primary/10 text-primary" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">注册时间</p>
-                    <p className="font-medium">{user.created_at}</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold">你好, {user.username}</h1>
+            <p className="text-muted-foreground">欢迎回到 AIFriend</p>
+          </div>
 
           {/* 功能卡片 */}
           <h2 className="text-xl font-semibold mb-4">快速开始</h2>
@@ -149,20 +97,22 @@ export default function Home() {
               </CardHeader>
             </Card>
 
-            <Card className="group hover:shadow-lg transition-shadow cursor-pointer">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center mb-2">
-                  <Settings className="w-6 h-6 text-green-500" />
-                </div>
-                <CardTitle className="flex items-center justify-between">
-                  个人设置
-                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                </CardTitle>
-                <CardDescription>
-                  自定义你的 AI 伙伴体验
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <Link href="/profile">
+              <Card className="group hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center mb-2">
+                    <Settings className="w-6 h-6 text-green-500" />
+                  </div>
+                  <CardTitle className="flex items-center justify-between">
+                    个人设置
+                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                  </CardTitle>
+                  <CardDescription>
+                    自定义你的 AI 伙伴体验
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
           </div>
         </main>
       </div>
@@ -172,23 +122,7 @@ export default function Home() {
   // 未登录用户界面
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* 顶部导航 */}
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Bot className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold">AIFriend</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" asChild>
-              <Link href="/login">登录</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/register">注册</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header user={null} onLogout={handleLogout} />
 
       {/* Hero 区域 */}
       <main className="max-w-6xl mx-auto px-4">
