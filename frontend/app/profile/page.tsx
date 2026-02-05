@@ -8,10 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Header } from '@/components/header';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { api, API_BASE_URL } from '@/lib/api';
 import { UserInfo } from '@/lib/types';
-import { Calendar, Eye, EyeOff, Mail, User } from 'lucide-react';
+import { Calendar, Eye, EyeOff, User } from 'lucide-react';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -214,7 +214,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex items-center gap-2 text-muted-foreground">
           <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           加载中...
@@ -223,11 +223,13 @@ export default function ProfilePage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      <Header user={user} onLogout={handleLogout} />
+  if (!user) {
+    return null;
+  }
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+  return (
+    <MainLayout user={user} onLogout={handleLogout}>
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6">个人资料</h1>
 
         <Tabs defaultValue="basic-info">
@@ -467,7 +469,7 @@ export default function ProfilePage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </main>
-    </div>
+      </div>
+    </MainLayout>
   );
 }
