@@ -11,8 +11,7 @@ import { ChatInput } from '@/components/chat/ChatInput';
 import { SuggestionChips } from '@/components/chat/SuggestionChips';
 import { api } from '@/lib/api';
 import { UserInfo } from '@/lib/types';
-import { Bot, ChevronRight, MessageSquare, Sparkles } from 'lucide-react';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bot, MessageSquare, Sparkles } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
@@ -72,7 +71,7 @@ export default function Home() {
 
   // Logged out user - Landing page
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background">
       <Header user={null} onLogout={handleLogout} />
 
       {/* Hero section */}
@@ -108,68 +107,11 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Features section */}
-        <div className="py-16 border-t">
-          <h2 className="text-2xl font-bold text-center mb-10">
-            为什么选择 AIFriend？
-          </h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card className="border-0 shadow-none bg-muted/50">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-2">
-                  <MessageSquare className="w-6 h-6 text-blue-500" />
-                </div>
-                <CardTitle className="text-lg">自然对话</CardTitle>
-                <CardDescription>
-                  流畅自然的对话体验，就像与真人朋友交流一样轻松愉快
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-0 shadow-none bg-muted/50">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-2">
-                  <Sparkles className="w-6 h-6 text-purple-500" />
-                </div>
-                <CardTitle className="text-lg">智能理解</CardTitle>
-                <CardDescription>
-                  强大的语义理解能力，准确把握你的需求和意图
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-0 shadow-none bg-muted/50">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mb-2">
-                  <Bot className="w-6 h-6 text-green-500" />
-                </div>
-                <CardTitle className="text-lg">个性定制</CardTitle>
-                <CardDescription>
-                  打造专属于你的 AI 伙伴，满足个性化需求
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-        </div>
-
-        {/* CTA section */}
-        <div className="py-16 border-t text-center">
-          <h2 className="text-2xl font-bold mb-4">准备好开始了吗？</h2>
-          <p className="text-muted-foreground mb-6">
-            立即注册，开启你的 AI 伙伴之旅
-          </p>
-          <Button size="lg" asChild className="text-lg px-8">
-            <Link href="/register">
-              免费开始
-              <ChevronRight className="w-5 h-5 ml-1" />
-            </Link>
-          </Button>
-        </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t py-8 mt-8">
-        <div className="max-w-4xl mx-auto px-4 text-center text-sm text-muted-foreground">
+      <footer className="absolute bottom-0 left-0 right-0 py-4">
+        <div className="text-center text-xs text-muted-foreground">
           <p>&copy; 2025 AIFriend. All rights reserved.</p>
         </div>
       </footer>
