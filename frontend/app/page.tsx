@@ -4,11 +4,15 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Header } from '@/components/header';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { WelcomeScreen } from '@/components/chat/WelcomeScreen';
+import { ChatInput } from '@/components/chat/ChatInput';
+import { SuggestionChips } from '@/components/chat/SuggestionChips';
 import { api } from '@/lib/api';
 import { UserInfo } from '@/lib/types';
-import { Bot, MessageSquare, Sparkles, Settings, ChevronRight } from 'lucide-react';
+import { Bot, ChevronRight, MessageSquare, Sparkles } from 'lucide-react';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
   const router = useRouter();
@@ -41,9 +45,14 @@ export default function Home() {
     router.refresh();
   };
 
+  const handleSendMessage = (message: string) => {
+    // TODO: Implement chat functionality
+    console.log('Send message:', message);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex items-center gap-2 text-muted-foreground">
           <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           加载中...
@@ -52,157 +61,149 @@ export default function Home() {
     );
   }
 
-  // 已登录用户界面
+  // Logged in user - ChatGPT style layout
   if (user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-        <Header user={user} onLogout={handleLogout} />
-
-        <main className="max-w-6xl mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold">你好, {user.username}</h1>
-            <p className="text-muted-foreground">欢迎回到 AIFriend</p>
-          </div>
-
-          {/* 功能卡片 */}
-          <h2 className="text-xl font-semibold mb-4">快速开始</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="group hover:shadow-lg transition-shadow cursor-pointer">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-2">
-                  <MessageSquare className="w-6 h-6 text-blue-500" />
-                </div>
-                <CardTitle className="flex items-center justify-between">
-                  开始对话
-                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                </CardTitle>
-                <CardDescription>
-                  与你的 AI 伙伴开始一段新的对话
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="group hover:shadow-lg transition-shadow cursor-pointer">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-2">
-                  <Sparkles className="w-6 h-6 text-purple-500" />
-                </div>
-                <CardTitle className="flex items-center justify-between">
-                  探索功能
-                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                </CardTitle>
-                <CardDescription>
-                  发现 AIFriend 的更多精彩功能
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Link href="/profile">
-              <Card className="group hover:shadow-lg transition-shadow cursor-pointer h-full">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center mb-2">
-                    <Settings className="w-6 h-6 text-green-500" />
-                  </div>
-                  <CardTitle className="flex items-center justify-between">
-                    个人设置
-                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                  </CardTitle>
-                  <CardDescription>
-                    自定义你的 AI 伙伴体验
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-          </div>
-        </main>
-      </div>
+      <MainLayout user={user} onLogout={handleLogout}>
+        <WelcomeScreen username={user.username} onSendMessage={handleSendMessage} />
+      </MainLayout>
     );
   }
 
-  // 未登录用户界面
+  // Logged out user - Landing page
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+    <div className="min-h-screen bg-background">
       <Header user={null} onLogout={handleLogout} />
 
-      {/* Hero 区域 */}
-      <main className="max-w-6xl mx-auto px-4">
-        <div className="py-20 md:py-32 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <Sparkles className="w-4 h-4" />
-            AI 驱动的智能伙伴
+      {/* Hero section */}
+      <main className="max-w-4xl mx-auto px-4">
+        <div className="py-16 md:py-24 flex flex-col items-center text-center">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+            <Bot className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-            遇见你的
-            <span className="text-primary"> AI 伙伴</span>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+            遇见你的 <span className="text-primary">AI 伙伴</span>
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+          <p className="text-lg text-muted-foreground max-w-xl mb-10">
             AIFriend 是你的智能对话伙伴，随时为你提供帮助、陪伴和创意灵感。
-            开启与 AI 的全新交互体验。
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild className="text-lg px-8">
-              <Link href="/register">
-                免费开始
-                <ChevronRight className="w-5 h-5 ml-1" />
+
+          {/* Chat input (redirects to login) */}
+          <LandingChatInput />
+
+          {/* Quick action buttons */}
+          <div className="flex flex-wrap justify-center gap-3 mt-8">
+            <Button variant="outline" asChild className="gap-2">
+              <Link href="/login">
+                <MessageSquare className="h-4 w-4" />
+                开始对话
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="text-lg px-8">
-              <Link href="/login">已有账号？登录</Link>
+            <Button variant="outline" asChild className="gap-2">
+              <Link href="/register">
+                <Sparkles className="h-4 w-4" />
+                免费注册
+              </Link>
             </Button>
           </div>
         </div>
 
-        {/* 特性介绍 */}
+        {/* Features section */}
         <div className="py-16 border-t">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
+          <h2 className="text-2xl font-bold text-center mb-10">
             为什么选择 AIFriend？
           </h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            <Card className="text-center border-0 shadow-none bg-transparent">
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card className="border-0 shadow-none bg-muted/50">
               <CardHeader>
-                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="w-8 h-8 text-blue-500" />
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-2">
+                  <MessageSquare className="w-6 h-6 text-blue-500" />
                 </div>
-                <CardTitle>自然对话</CardTitle>
-                <CardDescription className="text-base">
+                <CardTitle className="text-lg">自然对话</CardTitle>
+                <CardDescription>
                   流畅自然的对话体验，就像与真人朋友交流一样轻松愉快
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="text-center border-0 shadow-none bg-transparent">
+            <Card className="border-0 shadow-none bg-muted/50">
               <CardHeader>
-                <div className="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="w-8 h-8 text-purple-500" />
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-2">
+                  <Sparkles className="w-6 h-6 text-purple-500" />
                 </div>
-                <CardTitle>智能理解</CardTitle>
-                <CardDescription className="text-base">
+                <CardTitle className="text-lg">智能理解</CardTitle>
+                <CardDescription>
                   强大的语义理解能力，准确把握你的需求和意图
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="text-center border-0 shadow-none bg-transparent">
+            <Card className="border-0 shadow-none bg-muted/50">
               <CardHeader>
-                <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto mb-4">
-                  <Bot className="w-8 h-8 text-green-500" />
+                <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mb-2">
+                  <Bot className="w-6 h-6 text-green-500" />
                 </div>
-                <CardTitle>个性定制</CardTitle>
-                <CardDescription className="text-base">
+                <CardTitle className="text-lg">个性定制</CardTitle>
+                <CardDescription>
                   打造专属于你的 AI 伙伴，满足个性化需求
                 </CardDescription>
               </CardHeader>
             </Card>
           </div>
         </div>
+
+        {/* CTA section */}
+        <div className="py-16 border-t text-center">
+          <h2 className="text-2xl font-bold mb-4">准备好开始了吗？</h2>
+          <p className="text-muted-foreground mb-6">
+            立即注册，开启你的 AI 伙伴之旅
+          </p>
+          <Button size="lg" asChild className="text-lg px-8">
+            <Link href="/register">
+              免费开始
+              <ChevronRight className="w-5 h-5 ml-1" />
+            </Link>
+          </Button>
+        </div>
       </main>
 
-      {/* 底部 */}
-      <footer className="border-t py-8 mt-16">
-        <div className="max-w-6xl mx-auto px-4 text-center text-sm text-muted-foreground">
+      {/* Footer */}
+      <footer className="border-t py-8 mt-8">
+        <div className="max-w-4xl mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>&copy; 2025 AIFriend. All rights reserved.</p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+// Landing page chat input that redirects to login
+function LandingChatInput() {
+  const router = useRouter();
+  const [inputValue, setInputValue] = useState('');
+
+  const handleFocus = () => {
+    router.push('/login');
+  };
+
+  const handleSuggestionSelect = () => {
+    router.push('/login');
+  };
+
+  return (
+    <div className="w-full max-w-2xl space-y-4">
+      <div
+        onClick={handleFocus}
+        className="cursor-pointer"
+      >
+        <ChatInput
+          value={inputValue}
+          onChange={setInputValue}
+          onSend={() => router.push('/login')}
+          placeholder="给 AIFriend 发送消息..."
+        />
+      </div>
+      <SuggestionChips onSelect={handleSuggestionSelect} />
     </div>
   );
 }
