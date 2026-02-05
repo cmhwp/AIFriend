@@ -41,13 +41,31 @@ type (
 	// 更新用户信息请求
 	UpdateUserReq {
 		Username string `json:"username,optional"`
-		Email  string `json:"email,optional"`
-		Avatar string `json:"avatar,optional"`
+		Email    string `json:"email,optional"`
+		Avatar   string `json:"avatar,optional"`
 	}
 	// 修改密码请求
 	ChangePasswordReq {
 		OldPassword string `json:"old_password"`
 		NewPassword string `json:"new_password"`
+	}
+)
+
+// ==================== 角色相关 ====================
+type (
+	// 角色ID路径参数
+	CharacterIdReq {
+		Id int64 `path:"id"`
+	}
+	// 角色信息
+	CharacterInfo {
+		Id              int64  `json:"id"`
+		Name            string `json:"name"`
+		Photo           string `json:"photo"`
+		Profile         string `json:"profile"`
+		BackgroundImage string `json:"background_image"`
+		CreatedAt       string `json:"created_at"`
+		UpdatedAt       string `json:"updated_at"`
 	}
 )
 
@@ -83,7 +101,7 @@ service aifriend-api {
 	post /auth/refresh (RefreshTokenReq) returns (TokenResp)
 }
 
-// ==================== 需要认证的接口 ====================
+// ==================== 需要认证的接口 - 用户 ====================
 @server (
 	prefix: /api/v1
 	group:  user
@@ -106,3 +124,32 @@ service aifriend-api {
 	@handler UploadAvatar
 	post /user/avatar returns (DataResp)
 }
+
+// ==================== 需要认证的接口 - 角色 ====================
+@server (
+	prefix: /api/v1
+	group:  character
+	jwt:    Auth
+)
+service aifriend-api {
+	@doc "创建角色"
+	@handler CreateCharacter
+	post /character returns (DataResp)
+
+	@doc "获取角色列表"
+	@handler GetCharacterList
+	get /character/list returns (DataResp)
+
+	@doc "获取单个角色"
+	@handler GetCharacter
+	get /character/:id (CharacterIdReq) returns (DataResp)
+
+	@doc "更新角色"
+	@handler UpdateCharacter
+	put /character/:id returns (DataResp)
+
+	@doc "删除角色"
+	@handler RemoveCharacter
+	delete /character/:id (CharacterIdReq) returns (BaseResp)
+}
+
