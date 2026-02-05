@@ -162,6 +162,93 @@ class ApiClient {
 
     return data as ApiResponse;
   }
+
+  // 角色相关
+  async createCharacter(data: { name: string; profile?: string; photo?: File; background_image?: File }) {
+    const url = `${this.baseUrl}/api/v1/character`;
+    const formData = new FormData();
+    formData.append('name', data.name);
+    if (data.profile) {
+      formData.append('profile', data.profile);
+    }
+    if (data.photo) {
+      formData.append('photo', data.photo);
+    }
+    if (data.background_image) {
+      formData.append('background_image', data.background_image);
+    }
+
+    const headers: HeadersInit = {};
+    const accessToken = this.getAccessToken();
+    if (accessToken) {
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(responseData.message || '创建角色失败');
+    }
+
+    return responseData as ApiResponse;
+  }
+
+  async getCharacterList() {
+    return this.request<ApiResponse>('/api/v1/character/list');
+  }
+
+  async getCharacter(id: number) {
+    return this.request<ApiResponse>(`/api/v1/character/${id}`);
+  }
+
+  async updateCharacter(id: number, data: { name?: string; profile?: string; photo?: File; background_image?: File }) {
+    const url = `${this.baseUrl}/api/v1/character/${id}`;
+    const formData = new FormData();
+    if (data.name) {
+      formData.append('name', data.name);
+    }
+    if (data.profile !== undefined) {
+      formData.append('profile', data.profile);
+    }
+    if (data.photo) {
+      formData.append('photo', data.photo);
+    }
+    if (data.background_image) {
+      formData.append('background_image', data.background_image);
+    }
+
+    const headers: HeadersInit = {};
+    const accessToken = this.getAccessToken();
+    if (accessToken) {
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers,
+      body: formData,
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(responseData.message || '更新角色失败');
+    }
+
+    return responseData as ApiResponse;
+  }
+
+  async removeCharacter(id: number) {
+    return this.request<ApiResponse>(`/api/v1/character/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL);

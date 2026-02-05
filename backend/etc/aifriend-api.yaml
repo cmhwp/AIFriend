@@ -24,3 +24,5 @@ Cors:
 Upload:
   AvatarDir: "uploads/avatars"
   MaxAvatarSize: 2097152
+  CharacterDir: "uploads/characters"
+  MaxCharacterSize: 5242880

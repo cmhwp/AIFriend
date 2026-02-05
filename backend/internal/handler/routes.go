@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	auth "aifriend/internal/handler/auth"
+	character "aifriend/internal/handler/character"
 	user "aifriend/internal/handler/user"
 	"aifriend/internal/svc"
 
@@ -35,10 +36,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: auth.RegisterHandler(serverCtx),
 			},
 			{
-				// 获取头像
+				// 获取头像文件
 				Method:  http.MethodGet,
 				Path:    "/uploads/avatars/:filename",
 				Handler: user.ServeAvatarHandler(serverCtx),
+			},
+			{
+				// 获取角色头像文件
+				Method:  http.MethodGet,
+				Path:    "/uploads/characters/:filename",
+				Handler: character.ServeCharacterImageHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),
@@ -46,6 +53,49 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		[]rest.Route{
+			{
+				// 创建角色
+				Method:  http.MethodPost,
+				Path:    "/character",
+				Handler: character.CreateCharacterHandler(serverCtx),
+			},
+			{
+				// 获取单个角色
+				Method:  http.MethodGet,
+				Path:    "/character/:id",
+				Handler: character.GetCharacterHandler(serverCtx),
+			},
+			{
+				// 更新角色
+				Method:  http.MethodPut,
+				Path:    "/character/:id",
+				Handler: character.UpdateCharacterHandler(serverCtx),
+			},
+			{
+				// 删除角色
+				Method:  http.MethodDelete,
+				Path:    "/character/:id",
+				Handler: character.RemoveCharacterHandler(serverCtx),
+			},
+			{
+				// 获取角色列表
+				Method:  http.MethodGet,
+				Path:    "/character/list",
+				Handler: character.GetCharacterListHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 上传头像
+				Method:  http.MethodPost,
+				Path:    "/user/avatar",
+				Handler: user.UploadAvatarHandler(serverCtx),
+			},
 			{
 				// 获取当前用户信息
 				Method:  http.MethodGet,
@@ -63,12 +113,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/user/password",
 				Handler: user.ChangePasswordHandler(serverCtx),
-			},
-			{
-				// 上传头像
-				Method:  http.MethodPost,
-				Path:    "/user/avatar",
-				Handler: user.UploadAvatarHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

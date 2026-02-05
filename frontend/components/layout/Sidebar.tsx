@@ -26,6 +26,7 @@ import {
   PanelLeft,
   MoreHorizontal,
   User,
+  Users,
   LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -247,6 +248,12 @@ function UserDropdownContent({
         <Link href="/profile" className="cursor-pointer">
           <User className="mr-2 h-4 w-4" />
           个人资料
+        </Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem asChild>
+        <Link href="/characters" className="cursor-pointer">
+          <Users className="mr-2 h-4 w-4" />
+          我的角色
         </Link>
       </DropdownMenuItem>
       <DropdownMenuSeparator />

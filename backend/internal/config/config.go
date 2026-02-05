@@ -21,7 +21,9 @@ type Config struct {
 		AllowCredentials bool
 	}
 	Upload struct {
-		AvatarDir     string
-		MaxAvatarSize int64
+		AvatarDir       string
+		MaxAvatarSize   int64
+		CharacterDir    string
+		MaxCharacterSize int64
 	}
 }

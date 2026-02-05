@@ -28,7 +28,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 
 	// 自动迁移
-	if err := db.AutoMigrate(&model.User{}); err != nil {
+	if err := db.AutoMigrate(&model.User{}, &model.Character{}); err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 

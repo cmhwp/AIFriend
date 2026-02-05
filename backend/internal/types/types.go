@@ -13,6 +13,20 @@ type ChangePasswordReq struct {
 	NewPassword string `json:"new_password"`
 }
 
+type CharacterIdReq struct {
+	Id int64 `path:"id"`
+}
+
+type CharacterInfo struct {
+	Id              int64  `json:"id"`
+	Name            string `json:"name"`
+	Photo           string `json:"photo"`
+	Profile         string `json:"profile"`
+	BackgroundImage string `json:"background_image"`
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+}
+
 type DataResp struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
