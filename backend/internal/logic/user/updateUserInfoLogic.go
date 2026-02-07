@@ -66,6 +66,17 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(req *types.UpdateUserReq) (resp *ty
 	if email != "" {
 		updates["email"] = email
 	}
+
+	profile := strings.TrimSpace(req.Profile)
+	if profile != "" {
+		if len([]rune(profile)) > 500 {
+			return &types.BaseResp{
+				Code:    400,
+				Message: "简介最多500字",
+			}, nil
+		}
+		updates["profile"] = profile
+	}
 	if req.Avatar != "" {
 		updates["avatar"] = req.Avatar
 	}

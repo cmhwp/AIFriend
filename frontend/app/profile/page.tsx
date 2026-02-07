@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,7 +20,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
 
   // Basic info state
-  const [basicForm, setBasicForm] = useState({ username: '', email: '' });
+  const [basicForm, setBasicForm] = useState({ username: '', email: '', profile: '' });
   const [basicError, setBasicError] = useState('');
   const [basicSuccess, setBasicSuccess] = useState('');
   const [basicSaving, setBasicSaving] = useState(false);
@@ -63,7 +64,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      setBasicForm({ username: user.username || '', email: user.email || '' });
+      setBasicForm({ username: user.username || '', email: user.email || '', profile: user.profile || '' });
     }
   }, [user]);
 
@@ -94,15 +95,25 @@ export default function ProfilePage() {
 
     const username = basicForm.username.trim();
     const email = basicForm.email.trim();
+    const profile = basicForm.profile.trim();
 
     if (!username) {
       setBasicError('用户名不能为空');
       return;
     }
+    if (!profile) {
+      setBasicError('简介不能为空');
+      return;
+    }
+    if (profile.length > 500) {
+      setBasicError('简介最多500字');
+      return;
+    }
 
-    const updates: { username?: string; email?: string } = {};
+    const updates: { username?: string; email?: string; profile?: string } = {};
     if (username !== user.username) updates.username = username;
     if (email !== (user.email || '')) updates.email = email;
+    if (profile !== (user.profile || '')) updates.profile = profile;
 
     if (Object.keys(updates).length === 0) {
       setBasicError('没有需要更新的数据');
@@ -120,7 +131,7 @@ export default function ProfilePage() {
         const userInfo = await api.getUserInfo();
         setUser(userInfo);
       } catch {
-        setUser((prev) => prev ? { ...prev, ...updates, email: updates.email ?? prev.email } : prev);
+        setUser((prev) => prev ? { ...prev, ...updates, email: updates.email ?? prev.email, profile: updates.profile ?? prev.profile } : prev);
       }
       setBasicSuccess('保存成功');
     } catch (err) {
@@ -287,6 +298,26 @@ export default function ProfilePage() {
                       setBasicSuccess('');
                     }}
                     className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <Label htmlFor="profile-bio">简介</Label>
+                    <span className="text-xs text-muted-foreground">
+                      {basicForm.profile.length}/500
+                    </span>
+                  </div>
+                  <Textarea
+                    id="profile-bio"
+                    placeholder="写点自我介绍吧（最多500字）"
+                    value={basicForm.profile}
+                    onChange={(e) => {
+                      setBasicForm((prev) => ({ ...prev, profile: e.target.value }));
+                      setBasicError('');
+                      setBasicSuccess('');
+                    }}
+                    maxLength={500}
+                    rows={4}
                   />
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">

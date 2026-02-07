@@ -36,6 +36,7 @@ type (
 		Username  string `json:"username"`
 		Email     string `json:"email"`
 		Avatar    string `json:"avatar"`
+		Profile   string `json:"profile"`
 		CreatedAt string `json:"created_at"`
 	}
 	// 更新用户信息请求
@@ -43,6 +44,7 @@ type (
 		Username string `json:"username,optional"`
 		Email    string `json:"email,optional"`
 		Avatar   string `json:"avatar,optional"`
+		Profile  string `json:"profile,optional"`
 	}
 	// 修改密码请求
 	ChangePasswordReq {
@@ -152,4 +154,3 @@ service aifriend-api {
 	@handler RemoveCharacter
 	delete /character/:id (CharacterIdReq) returns (BaseResp)
 }
-

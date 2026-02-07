@@ -3,6 +3,7 @@ export interface UserInfo {
   username: string;
   email: string;
   avatar: string;
+  profile: string;
   created_at: string;
 }
 

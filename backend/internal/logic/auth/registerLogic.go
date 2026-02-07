@@ -67,6 +67,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.BaseResp, 
 		Username: username,
 		Password: string(hashedPassword),
 		Email:    req.Email,
+		Profile:  "谢谢你的关注",
 	}
 
 	if err := l.svcCtx.DB.Create(&user).Error; err != nil {

@@ -47,6 +47,7 @@ func (l *GetUserInfoLogic) GetUserInfo() (resp *types.UserInfo, err error) {
 		Username:  user.Username,
 		Email:     user.Email,
 		Avatar:    user.Avatar,
+		Profile:   user.Profile,
 		CreatedAt: user.CreatedAt.Format("2006-01-02 15:04:05"),
 	}, nil
 }

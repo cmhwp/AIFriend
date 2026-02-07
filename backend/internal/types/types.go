@@ -58,6 +58,7 @@ type UpdateUserReq struct {
 	Username string `json:"username,optional"`
 	Email    string `json:"email,optional"`
 	Avatar   string `json:"avatar,optional"`
+	Profile  string `json:"profile,optional"`
 }
 
 type UserInfo struct {
@@ -65,5 +66,6 @@ type UserInfo struct {
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 	Avatar    string `json:"avatar"`
+	Profile   string `json:"profile"`
 	CreatedAt string `json:"created_at"`
 }

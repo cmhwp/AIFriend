@@ -119,11 +119,12 @@ class ApiClient {
       username: string;
       email: string;
       avatar: string;
+      profile: string;
       created_at: string;
     }>('/api/v1/user/info');
   }
 
-  async updateUserInfo(data: { username?: string; email?: string; avatar?: string }) {
+  async updateUserInfo(data: { username?: string; email?: string; avatar?: string; profile?: string }) {
     return this.request<ApiResponse>('/api/v1/user/info', {
       method: 'PUT',
       body: JSON.stringify(data),

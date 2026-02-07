@@ -1,7 +1,7 @@
 Name: aifriend-api
 Host: 0.0.0.0
 Port: 8888
-MaxBytes: 3145728
+MaxBytes: 12582912
 
 # JWT认证配置
 Auth:
